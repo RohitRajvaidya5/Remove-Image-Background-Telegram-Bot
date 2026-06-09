@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import (
     Application,
     MessageHandler,
+    CommandHandler,
     ContextTypes,
     filters
 )
@@ -27,7 +28,43 @@ os.makedirs("downloads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
 session = new_session("birefnet-general")
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    await update.message.reply_text(
+        """
+📸 Send any photo and I'll remove its background.
+
+Supported:
+✅ Portrait photos
+✅ Product photos
+✅ Animals
+✅ Objects
+
+Output:
+🖼️ Transparent PNG
+"""
+    )
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    await update.message.reply_text(
+        """
+👋 Welcome to AI Background Remover Bot
+
+How to use:
+
+1️⃣ Send any photo to this chat
+2️⃣ The AI will automatically remove the background
+3️⃣ You'll receive a transparent PNG image
+
+✨ Best results:
+• Use clear, high-quality images
+• Ensure the subject is visible
+• Portraits and product photos work best
+
+📸 Just send a photo to get started!
+"""
+    )
 
 async def remove_background(
     update: Update,
@@ -155,11 +192,21 @@ if TOKEN is None:
 app = Application.builder().token(TOKEN).build()
 
 app.add_handler(
+    CommandHandler("start", start)
+)
+
+app.add_handler(
+    CommandHandler("help", help_command)
+)
+
+app.add_handler(
     MessageHandler(
         filters.PHOTO,
         remove_background
     )
 )
+
+
 
 print("Bot running...")
 app.run_polling()
