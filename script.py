@@ -27,7 +27,8 @@ logging.basicConfig(
 os.makedirs("downloads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
-session = new_session("birefnet-general")
+session = new_session("u2net_human_seg")
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
