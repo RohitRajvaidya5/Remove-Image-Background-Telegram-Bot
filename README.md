@@ -160,6 +160,21 @@ BOT_TOKEN=YOUR_TOKEN
 
 ## Supported Models
 
+Below is a list of available models and what they are best for:
+
+| Model | Best For |
+|---|---|
+| u2net | Original rembg model, good general-purpose background removal |
+| u2netp | Smaller and faster version of U²-Net, lower accuracy |
+| u2net_human_seg | Human portraits only |
+| u2net_cloth_seg | Clothing segmentation |
+| silueta | Lightweight model, fast but less accurate |
+| isnet-general-use | Improved general-purpose model (currently used) |
+| isnet-anime | Anime and cartoon characters |
+| sam | Meta Segment Anything Model (more flexible but heavier) |
+
+Note: I'm currently using `isnet-general-use` to reduce memory usage inside Docker containers; the larger models may not fit due to memory constraints.
+
 ### BiRefNet (Recommended)
 
 ```python
