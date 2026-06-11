@@ -27,7 +27,7 @@ logging.basicConfig(
 os.makedirs("downloads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
-session = new_session("birefnet-general")
+session = new_session("isnet-general-use")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
