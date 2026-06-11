@@ -30,8 +30,11 @@ os.makedirs("outputs", exist_ok=True)
 session = new_session("isnet-general-use")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = update.effective_message
+    if message is None:
+        return
 
-    await update.message.reply_text(
+    await message.reply_text(
         """
 📸 Send any photo and I'll remove its background.
 
@@ -47,8 +50,11 @@ Output:
     )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = update.effective_message
+    if message is None:
+        return
 
-    await update.message.reply_text(
+    await message.reply_text(
         """
 👋 Welcome to AI Background Remover Bot
 
@@ -72,24 +78,21 @@ async def remove_background(
     context: ContextTypes.DEFAULT_TYPE
 ):
     try:
-        message = update.effective_message
-        if message is None:
+        msg = update.effective_message
+        if msg is None:
             return
 
-        # Tell type checkers that message is not None beyond this point
-        assert message is not None
-
-        await message.reply_text(
+        await msg.reply_text(
             "Processing image..."
         )
 
-        if not message.photo:
-            await message.reply_text(
+        if not msg.photo:
+            await msg.reply_text(
                 "Please send a valid image."
             )
             return
 
-        photo = message.photo[-1]
+        photo = msg.photo[-1]
 
         input_path = (
             f"downloads/{photo.file_unique_id}.jpg"
@@ -106,7 +109,7 @@ async def remove_background(
         except Exception as e:
             logging.exception("Image download failed")
 
-            await message.reply_text(
+            await msg.reply_text(
                 "Failed to download image."
             )
             return
@@ -115,7 +118,7 @@ async def remove_background(
             input_image = Image.open(input_path)
 
         except Exception:
-            await message.reply_text(
+            await msg.reply_text(
                 "Invalid image file."
             )
             return
@@ -133,7 +136,7 @@ async def remove_background(
         except Exception as e:
             logging.exception("Background removal failed")
 
-            await message.reply_text(
+            await msg.reply_text(
                 "Failed to remove background."
             )
             return
@@ -163,7 +166,7 @@ async def remove_background(
         output_image.save(output_path)
 
         with open(output_path, "rb") as file:
-            await message.reply_document(
+            await msg.reply_document(
                 document=file,
                 filename="background_removed.png"
             )
@@ -175,9 +178,12 @@ async def remove_background(
     except Exception:
         logging.exception("Unexpected error")
 
-        await message.reply_text(
-            "An unexpected error occurred. Please try again."
-        )
+        # attempt to notify the user if possible
+        err_msg = update.effective_message
+        if err_msg is not None:
+            await err_msg.reply_text(
+                "An unexpected error occurred. Please try again."
+            )
 
     finally:
         if os.path.exists(input_path):
